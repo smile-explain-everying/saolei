@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Document</title>
+</head>
+<style>
+    *{
+    	padding: 0;
+    	margin: 0;
+    }
+    body{
+    	background: url(bg.jpg) no-repeat;
+    	background-size: 100%;
+    }
+    .title{
+      width: 200px;
+      height: 400px;
+      position: absolute;
+      top:150px;
+      left: 0;
+      background: url(title.png);
+    }
+	.sence{ 
+		width: 600px;
+		height: 600px;
+		/*border: 1px solid #000;*/
+		position: absolute;
+		margin: auto;
+		left:0;
+		right:0;
+		top:0;
+		bottom: 0;
+	}
+	.block{
+		width: 59px;
+		height: 59px;
+		margin:0 1px 1px 0;
+		background:url(bga.png);
+		background-size: 100%;
+		background-repeat: no-repeat;
+		float: left;
+		text-align: center;
+		line-height: 59px;
+	}
+	.biaoji{
+		background: url(bge.png) no-repeat;
+    	background-size: 100%;
+	}
+    .tip{
+    	background: url(bgb.png) no-repeat;
+    	background-size: 100%;
+    }
+    .warnning{
+    	background: url(bgc.png) no-repeat;
+    	background-size: 100%;
+    	/*background: rgba(255,255,255,0);*/
+    }
+    .tishi{
+    	width: 200px;
+    	height: 100px;
+    	position: absolute;
+    	margin: auto;
+    	left: 0;
+    	right:0;
+    	top:0;
+    	bottom: 0;
+    	background: url(bgd.png) no-repeat;
+    	background-size: 100%;
+    	z-index:2;
+    	display: none;
+
+    }
+    .imgs{
+    	width:80px;
+    	height: 80px;
+    	display: inline-block;
+    	float: left;
+    	margin-top: 10px;
+    	margin-left: 10px;
+
+    }
+    .imgs img{
+    	width: 80px;
+    	height: 80px;
+    }
+   .shu{
+   	    width: 100px;
+   	    height: 80px;
+   	    float: left;
+   	    margin-top: 10px;
+    	margin-left: 10px;
+    	text-align: center;
+   }
+   .shu h4{
+   	    text-align:center;
+   	    line-height: 60px; 
+   }
+   
+</style>
+<body>
+  <div class="title"></div>
+	<div class="sence"></div>
+	<div class="tishi first">
+		<div class="imgs">
+			<img src="1.jpg" alt="">
+		</div>
+		<div class="shu">
+			<h4>您输了！！！</h4>
+			<input type="button" value="重新开始" class="restart">
+		</div>
+	</div>
+	<div class="tishi two">
+		<div class="imgs">
+			<img src="1.jpg" alt="">
+		</div>
+		<div class="shu">
+			<h4>您赢了！！！</h4>
+			<input type="button" value="重新开始" class="restart">
+		</div>
+	</div>
+<script src='jquery工程文件/jquery-1.12.0.js'></script>
+<script>
+	$(document).on('contextmenu',false)
+	$('.restart').on('click',function(){
+		$('.sence').empty();
+		rander()
+		 $('.tishi').hide();
+	})
+	var xy2id=function(a,b){
+		return a+'-'+b
+	}
+   var jisuan=function(x,y){
+     var num=0;
+     if($('#'+xy2id(x,y-1)).is('.lei')){num++};
+     if($('#'+xy2id(x,y+1)).is('.lei')){num++};
+     if($('#'+xy2id(x-1,y-1)).is('.lei')){num++};
+     if($('#'+xy2id(x-1,y)).is('.lei')){num++};
+     if($('#'+xy2id(x-1,y+1)).is('.lei')){num++};
+     if($('#'+xy2id(x+1,y-1)).is('.lei')){num++};
+     if($('#'+xy2id(x+1,y)).is('.lei')){num++};
+     if($('#'+xy2id(x+1,y+1)).is('.lei')){num++};
+     return num;
+   }
+	var left=function(e){
+		if($(this).is('.biaoji')){
+			return
+		}
+       if(e.data.lei){
+       	$('.lei').addClass('warnning')
+        $('.tishi.first').show();
+        // tishi.style.display='block';
+       	return
+       }else{
+       	$(this).text(jisuan(e.data.x,e.data.y)).addClass('tip')
+       	if($('.tip').length===$('.block').length-$('.lei').length){
+       		 $('.tishi.two').show();
+       	}
+       	if($(this).text()==='0'){
+       		$(this).html('')
+       	}
+       }  
+	}
+	var right=function(e){
+		if($(this).is('.tip')){
+			return
+		}
+       $(this).toggleClass('biaoji')
+       if($('.lei').length===$('.biaoji').length){
+       	if( $('.lei.biaoji').length===$('.lei').length ){
+       		 $('.tishi.two').show();
+       		return
+       	}
+       	alert('撒不撒');
+       	 $('.tishi.first').show();
+       }
+     
+
+	}
+	
+	var clickHandler=function(e){
+		if(e.which===1){
+           // zuojian.call(this,e);有兼容性问题
+           $.proxy(left,this)(e);
+		}else if(e.which===3){
+           // youjian.call(this,e);
+           $.proxy(right,this)(e);
+		}
+	}
+	var rander=function(){
+		var ROM=10;
+	var sence=$('.sence')
+	var i=0,j=0;
+	for(var i=0;i<ROM;i++){
+		for(var j=0;j<ROM;j++){
+			var isLei=Math.random()>0.9;
+			$('<div>')
+			.addClass(function(){
+				return 'block '+ (isLei?'lei':'')
+			})
+			.attr('id',xy2id(i,j))
+			// .text(function(){
+			// 	return isLei?'⚽':''
+			// })
+			.on('mousedown',{x:i,y:j,lei:isLei},clickHandler)
+			.appendTo(sence)
+		}
+	  }
+	}
+	rander();
+	
+
+
+</script>
+</body>
+</html>
